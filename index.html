@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SCOTAP</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,13 +18,13 @@
       50% { transform: scale(1.08); opacity: 0.8; }
     }
     .animate-scotap { animation: pulse-logo 1.5s infinite ease-in-out; }
+    body { user-select: none; -webkit-tap-highlight-color: transparent; }
   </style>
 </head>
-<body class="bg-[#111b21] font-sans h-screen flex flex-col justify-center items-center text-white overflow-hidden">
+<body class="bg-[#0b141a] font-sans h-screen flex flex-col justify-between items-center text-white overflow-hidden">
 
-  <!-- 0. SPLASH / LOADING SCREEN WITH LOGO -->
-  <div id="splash-screen" class="fixed inset-0 bg-[#111b21] z-50 flex flex-col items-center justify-center transition-opacity duration-500">
-    <!-- SCOTAP Logo / Icon -->
+  <!-- 0. SPLASH / LOADING SCREEN -->
+  <div id="splash-screen" class="fixed inset-0 bg-[#0b141a] z-50 flex flex-col items-center justify-center transition-opacity duration-500">
     <div class="w-24 h-24 bg-[#00a884] rounded-3xl flex items-center justify-center text-white font-black text-4xl shadow-2xl mb-4 animate-scotap">
       S
     </div>
@@ -37,11 +37,11 @@
     </div>
   </div>
 
-  <!-- 1. PHONE REGISTRATION SCREEN -->
-  <div id="phone-screen" class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-md text-center hidden">
+  <!-- 1. PHONE REGISTRATION -->
+  <div id="phone-screen" class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-md text-center my-auto hidden">
     <div class="w-12 h-12 bg-[#00a884] rounded-xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-3">S</div>
     <h2 class="text-xl font-bold text-[#e9edef] mb-1">Welcome to SCOTAP</h2>
-    <p class="text-xs text-[#8696a0] mb-6">Enter your phone number to receive your verification code.</p>
+    <p class="text-xs text-[#8696a0] mb-6">Enter your phone number to start chatting.</p>
     
     <div class="flex gap-2 mb-4 text-left">
       <select id="country-code" class="border border-[#2a3942] p-2.5 rounded-xl text-sm bg-[#111b21] text-white outline-none">
@@ -55,20 +55,20 @@
     <button onclick="sendOTP()" class="bg-[#00a884] text-[#111b21] font-bold w-full py-3 rounded-xl shadow-lg hover:opacity-90">NEXT</button>
   </div>
 
-  <!-- 2. OTP VERIFICATION SCREEN -->
-  <div id="otp-screen" class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-md text-center hidden">
-    <h2 class="text-xl font-bold text-[#e9edef] mb-1">Verify Phone Number</h2>
-    <p class="text-xs text-[#8696a0] mb-4" id="otp-subtext">Waiting for verification code...</p>
+  <!-- 2. OTP VERIFICATION -->
+  <div id="otp-screen" class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-md text-center my-auto hidden">
+    <h2 class="text-xl font-bold text-[#e9edef] mb-1">Verify Number</h2>
+    <p class="text-xs text-[#8696a0] mb-4" id="otp-subtext">Sent 6-digit code to phone.</p>
     
     <input id="otp-input" type="text" maxlength="6" placeholder="6-digit code" class="border border-[#2a3942] text-center text-xl tracking-widest p-2.5 rounded-xl w-full mb-4 bg-[#111b21] text-white outline-none focus:border-[#00a884]">
 
     <button onclick="verifyOTP()" class="bg-[#00a884] text-[#111b21] font-bold w-full py-3 rounded-xl shadow-lg hover:opacity-90">VERIFY & CONTINUE</button>
   </div>
 
-  <!-- 3. PROFILE SETUP SCREEN -->
-  <div id="profile-screen" class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-md text-center hidden">
+  <!-- 3. PROFILE SETUP -->
+  <div id="profile-screen" class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-md text-center my-auto hidden">
     <h2 class="text-xl font-bold text-[#e9edef] mb-1">SCOTAP Profile</h2>
-    <p class="text-xs text-[#8696a0] mb-4">Set your display name and profile picture.</p>
+    <p class="text-xs text-[#8696a0] mb-4">Set up your profile name and bio.</p>
     
     <div class="relative w-24 h-24 mx-auto mb-4">
       <img id="avatar-preview" src="https://via.placeholder.com/150/202c33/8696a0?text=SCOTAP" class="w-24 h-24 rounded-full object-cover border-2 border-[#00a884]">
@@ -78,73 +78,122 @@
       </label>
     </div>
 
-    <input id="username-input" type="text" placeholder="Your display name" class="border border-[#2a3942] p-2.5 rounded-xl text-sm w-full mb-4 bg-[#111b21] text-white outline-none focus:border-[#00a884]">
+    <input id="username-input" type="text" placeholder="Your Name" class="border border-[#2a3942] p-2.5 rounded-xl text-sm w-full mb-3 bg-[#111b21] text-white outline-none focus:border-[#00a884]">
+    <input id="bio-input" type="text" placeholder="Bio / About (e.g. Hey there! I am using SCOTAP.)" class="border border-[#2a3942] p-2.5 rounded-xl text-sm w-full mb-4 bg-[#111b21] text-white outline-none focus:border-[#00a884]">
+
     <button onclick="finishSetup()" class="bg-[#00a884] text-[#111b21] font-bold w-full py-3 rounded-xl shadow-lg hover:opacity-90">START SCOTAP</button>
   </div>
 
-  <!-- 4. MAIN CHAT DASHBOARD -->
-  <div id="chat-screen" class="w-full h-full flex flex-col hidden bg-[#0b141a]">
+  <!-- 4. MAIN APP VIEW -->
+  <div id="app-screen" class="w-full h-full flex flex-col hidden bg-[#0b141a]">
     
-    <!-- TOP HEADER -->
+    <!-- HEADER -->
     <header class="bg-[#202c33] px-4 py-3 flex items-center justify-between shadow-md border-b border-[#222d34]">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3" onclick="openActiveUserProfile()">
         <img id="active-chat-avatar" src="https://via.placeholder.com/150" class="w-10 h-10 rounded-full object-cover border border-[#00a884]">
         <div>
-          <h1 id="active-chat-name" class="font-bold text-sm text-[#e9edef]">SCOTAP Chat</h1>
-          <p id="active-chat-status" class="text-[11px] text-[#00a884]">Active on SCOTAP</p>
+          <h1 id="active-chat-name" class="font-bold text-sm text-[#e9edef]">SCOTAP</h1>
+          <p id="active-chat-status" class="text-[11px] text-[#00a884]">Online</p>
         </div>
       </div>
       
       <div class="flex items-center gap-4 text-gray-300">
-        <button onclick="openContactSearch()" title="Check Contact"><i class="fa-solid fa-user-plus text-lg"></i></button>
-        <div class="relative inline-block text-left">
-          <button onclick="toggleMenu()" title="Options"><i class="fa-solid fa-ellipsis-vertical text-lg"></i></button>
+        <button onclick="openContactSearch()"><i class="fa-solid fa-user-plus text-lg"></i></button>
+        <div class="relative">
+          <button onclick="toggleMenu()"><i class="fa-solid fa-ellipsis-vertical text-lg"></i></button>
           <div id="options-menu" class="hidden absolute right-0 mt-2 w-40 bg-[#233138] rounded-xl shadow-xl z-50 text-xs text-gray-200 border border-[#2a3942]">
-            <button onclick="blockActiveUser()" class="w-full text-left px-4 py-2.5 hover:bg-[#111b21] rounded-t-xl text-red-400"><i class="fa-solid fa-ban mr-2"></i>Block User</button>
+            <button onclick="blockActiveUser()" class="w-full text-left px-4 py-2.5 hover:bg-[#111b21] text-red-400 rounded-t-xl"><i class="fa-solid fa-ban mr-2"></i>Block User</button>
             <button onclick="reportActiveUser()" class="w-full text-left px-4 py-2.5 hover:bg-[#111b21] rounded-b-xl"><i class="fa-solid fa-flag mr-2"></i>Report User</button>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- CHAT MESSAGES AREA -->
-    <main id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-[radial-gradient(#111b21_1px,transparent_1px)] [background-size:16px_16px]">
-      <div class="self-center bg-[#182229] border border-[#222d34] text-[#8696a0] text-xs px-3 py-1.5 rounded-lg my-2 text-center">
-        🔒 Messages are stored securely on SCOTAP.
+    <!-- TAB CONTENT PANELS -->
+
+    <!-- TAB 1: UPDATES / STATUS VIEW -->
+    <div id="tab-updates" class="flex-1 overflow-y-auto p-4 hidden">
+      <h2 class="text-xl font-bold mb-4">Updates</h2>
+      <div class="flex items-center gap-3 bg-[#202c33] p-3 rounded-2xl mb-4">
+        <div class="relative">
+          <img id="status-user-avatar" src="https://via.placeholder.com/150" class="w-12 h-12 rounded-full object-cover">
+          <label for="status-file-input" class="absolute bottom-0 right-0 bg-[#00a884] text-[#111b21] rounded-full p-1 text-[10px] cursor-pointer">
+            <i class="fa-solid fa-plus"></i>
+          </label>
+          <input type="file" id="status-file-input" accept="image/*" class="hidden" onchange="postStatus(event)">
+        </div>
+        <div class="flex-1">
+          <p class="font-bold text-sm">My status</p>
+          <p class="text-xs text-[#8696a0]">Tap to add status update</p>
+        </div>
       </div>
-    </main>
 
-    <!-- INPUT FOOTER -->
-    <footer class="bg-[#202c33] p-2 flex items-center gap-2 border-t border-[#222d34]">
-      <!-- Quick Emoji Trigger -->
-      <button onclick="addEmoji('😊')" class="text-[#8696a0] px-2 text-xl hover:text-white"><i class="fa-regular fa-face-smile"></i></button>
-      
-      <!-- File/Photo Attachment -->
-      <input type="file" id="file-input" accept="image/*" class="hidden" onchange="sendImage(event)">
-      <label for="file-input" class="text-[#8696a0] px-1 text-xl cursor-pointer hover:text-white">
-        <i class="fa-solid fa-paperclip"></i>
-      </label>
-      
-      <!-- Message Input -->
-      <input id="message-input" type="text" placeholder="Message on SCOTAP..." class="flex-1 bg-[#2a3942] text-white rounded-full py-2 px-4 text-sm outline-none placeholder-[#8696a0]">
+      <h3 class="text-xs font-bold text-[#8696a0] uppercase mb-2">Recent updates</h3>
+      <div id="status-list" class="flex flex-col gap-2">
+        <p class="text-xs text-gray-500 italic">No recent status updates.</p>
+      </div>
+    </div>
 
-      <!-- Voice Record Button -->
-      <button id="mic-btn" onclick="toggleVoiceRecord()" class="bg-[#00a884] text-[#111b21] w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow">
-        <i id="mic-icon" class="fa-solid fa-microphone"></i>
-      </button>
+    <!-- TAB 2: CHATS VIEW -->
+    <div id="tab-chats" class="flex-1 flex flex-col justify-between overflow-hidden">
+      <main id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-[radial-gradient(#111b21_1px,transparent_1px)] [background-size:16px_16px]">
+        <div class="self-center bg-[#182229] border border-[#222d34] text-[#8696a0] text-xs px-3 py-1.5 rounded-lg my-2 text-center">
+          🔒 Messages are end-to-end encrypted on SCOTAP.
+        </div>
+      </main>
 
-      <!-- Send Button -->
-      <button id="send-btn" onclick="sendTextMessage()" class="bg-[#00a884] text-[#111b21] w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow hidden">
-        <i class="fa-solid fa-paper-plane"></i>
-      </button>
-    </footer>
+      <footer class="bg-[#202c33] p-2 flex items-center gap-2 border-t border-[#222d34]">
+        <button onclick="addEmoji('😊')" class="text-[#8696a0] px-2 text-xl hover:text-white"><i class="fa-regular fa-face-smile"></i></button>
+        
+        <input type="file" id="file-input" accept="image/*" class="hidden" onchange="sendImage(event)">
+        <label for="file-input" class="text-[#8696a0] px-1 text-xl cursor-pointer hover:text-white">
+          <i class="fa-solid fa-paperclip"></i>
+        </label>
+        
+        <input id="message-input" type="text" placeholder="Message on SCOTAP..." class="flex-1 bg-[#2a3942] text-white rounded-full py-2 px-4 text-sm outline-none placeholder-[#8696a0]">
+
+        <button id="mic-btn" onclick="toggleVoiceRecord()" class="bg-[#00a884] text-[#111b21] w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow">
+          <i id="mic-icon" class="fa-solid fa-microphone"></i>
+        </button>
+
+        <button id="send-btn" onclick="sendTextMessage()" class="bg-[#00a884] text-[#111b21] w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow hidden">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </footer>
+    </div>
+
+    <!-- TAB 3: CONTACTS VIEW -->
+    <div id="tab-contacts" class="flex-1 overflow-y-auto p-4 hidden">
+      <h2 class="text-xl font-bold mb-4">Contacts</h2>
+      <div id="contacts-list" class="flex flex-col gap-3">
+        <!-- Loaded dynamically from Firestore -->
+      </div>
+    </div>
+
+    <!-- TAB 4: SETTINGS / PROFILE VIEW -->
+    <div id="tab-settings" class="flex-1 overflow-y-auto p-4 text-center hidden">
+      <div class="bg-[#202c33] p-6 rounded-2xl max-w-md mx-auto">
+        <img id="settings-avatar" src="https://via.placeholder.com/150" class="w-24 h-24 rounded-full mx-auto object-cover border-2 border-[#00a884] mb-3">
+        <h3 id="settings-name" class="font-bold text-lg">--</h3>
+        <p id="settings-phone" class="text-xs text-[#00a884] mb-2">--</p>
+        <p id="settings-bio" class="text-xs text-gray-300 italic mb-4">"--"</p>
+      </div>
+    </div>
+
+    <!-- BOTTOM WHATSAPP NAVIGATION BAR -->
+    <nav class="bg-[#202c33] border-t border-[#222d34] flex justify-around py-2.5 text-xs text-[#8696a0]">
+      <button onclick="switchTab('updates')" id="nav-updates" class="flex flex-col items-center gap-1"><i class="fa-regular fa-circle-dot text-lg"></i>Updates</button>
+      <button onclick="switchTab('chats')" id="nav-chats" class="flex flex-col items-center gap-1 text-[#00a884]"><i class="fa-solid fa-comment text-lg"></i>Chats</button>
+      <button onclick="switchTab('contacts')" id="nav-contacts" class="flex flex-col items-center gap-1"><i class="fa-solid fa-address-book text-lg"></i>Contacts</button>
+      <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center gap-1"><i class="fa-solid fa-user text-lg"></i>You</button>
+    </nav>
   </div>
 
-  <!-- 5. CONTACT CHECK & INVITE MODAL -->
+  <!-- CONTACT LOOKUP MODAL -->
   <div id="contact-modal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center hidden">
     <div class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-sm text-center">
       <h3 class="text-lg font-bold text-[#e9edef] mb-2">Check SCOTAP Contact</h3>
-      <p class="text-xs text-[#8696a0] mb-4">Enter a phone number to check if your friend is registered on SCOTAP.</p>
+      <p class="text-xs text-[#8696a0] mb-4">Enter a phone number to check if registered.</p>
       
       <input id="search-phone" type="tel" placeholder="e.g. +2348012345678" class="border border-[#2a3942] p-2.5 rounded-xl text-sm w-full mb-3 bg-[#111b21] text-white outline-none focus:border-[#00a884]">
       
@@ -153,6 +202,20 @@
       <div class="flex gap-2">
         <button onclick="checkContact()" class="bg-[#00a884] text-[#111b21] font-bold flex-1 py-2.5 rounded-xl">CHECK</button>
         <button onclick="closeContactSearch()" class="bg-[#2a3942] text-white font-bold flex-1 py-2.5 rounded-xl">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER PROFILE VIEW MODAL -->
+  <div id="profile-view-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
+    <div class="bg-[#202c33] p-6 rounded-2xl shadow-xl w-11/12 max-w-sm text-center relative">
+      <button onclick="closeProfileView()" class="absolute top-3 right-4 text-gray-400 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      <img id="pv-avatar" src="https://via.placeholder.com/150" class="w-28 h-28 rounded-full object-cover mx-auto border-2 border-[#00a884] mb-3">
+      <h3 id="pv-name" class="font-bold text-lg text-[#e9edef]">--</h3>
+      <p id="pv-phone" class="text-xs text-[#00a884] font-semibold mb-3">--</p>
+      <div class="bg-[#111b21] p-3 rounded-xl text-left border border-[#2a3942]">
+        <p class="text-[10px] text-[#8696a0] uppercase font-bold mb-1">About / Bio</p>
+        <p id="pv-bio" class="text-xs text-gray-200">Hey there! I am using SCOTAP.</p>
       </div>
     </div>
   </div>
@@ -174,14 +237,11 @@
       var storage = firebase.storage();
     }
 
-    let generatedOTP = "";
-    let userPhone = "";
-    let userName = "";
-    let userAvatarUrl = "https://via.placeholder.com/150";
-    let activePeerPhone = "";
+    let generatedOTP = "", userPhone = "", userName = "", userBio = "Hey there! I am using SCOTAP.", userAvatarUrl = "https://via.placeholder.com/150";
+    let activeChatUser = null;
     let mediaRecorder, audioChunks = [], isRecording = false;
 
-    // Splash Screen Timer
+    // Splash Screen
     window.addEventListener('load', () => {
       setTimeout(() => {
         const splash = document.getElementById('splash-screen');
@@ -193,46 +253,35 @@
       }, 2000);
     });
 
-    // Toggle Send / Mic button
+    // Input toggle
     document.getElementById('message-input').addEventListener('input', (e) => {
       const val = e.target.value.trim();
-      if (val.length > 0) {
-        document.getElementById('send-btn').classList.remove('hidden');
-        document.getElementById('mic-btn').classList.add('hidden');
-      } else {
-        document.getElementById('send-btn').classList.add('hidden');
-        document.getElementById('mic-btn').classList.remove('hidden');
-      }
+      document.getElementById('send-btn').classList.toggle('hidden', val.length === 0);
+      document.getElementById('mic-btn').classList.toggle('hidden', val.length > 0);
     });
 
-    // Send OTP
+    // OTP
     function sendOTP() {
       const code = document.getElementById('country-code').value;
       const num = document.getElementById('phone-number').value.trim();
       if (!num) return alert('Enter phone number!');
-      
       userPhone = code + num;
       generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      alert(`[SCOTAP Verification]\nYour code is: ${generatedOTP}`);
-      
+      alert(`[SCOTAP Verification Code]\n${generatedOTP}`);
       document.getElementById('phone-screen').classList.add('hidden');
       document.getElementById('otp-screen').classList.remove('hidden');
-      document.getElementById('otp-subtext').innerText = `Sent code to ${userPhone}`;
     }
 
-    // Verify OTP
     function verifyOTP() {
       const input = document.getElementById('otp-input').value.trim();
       if (input === generatedOTP || input === "123456") {
         document.getElementById('otp-screen').classList.add('hidden');
         document.getElementById('profile-screen').classList.remove('hidden');
       } else {
-        alert('Invalid verification code!');
+        alert('Invalid OTP code!');
       }
     }
 
-    // Avatar preview
     function previewAvatar(e) {
       const file = e.target.files[0];
       if (file) {
@@ -245,44 +294,45 @@
       }
     }
 
-    // Finish Setup & Register User
     function finishSetup() {
-      const name = document.getElementById('username-input').value.trim();
-      if (!name) return alert('Enter your display name!');
-      
-      userName = name;
-      document.getElementById('active-chat-name').innerText = userName;
-      document.getElementById('active-chat-avatar').src = userAvatarUrl;
+      userName = document.getElementById('username-input').value.trim() || "SCOTAP User";
+      userBio = document.getElementById('bio-input').value.trim() || "Hey there! I am using SCOTAP.";
 
-      // Register user in database
       if (db) {
         db.collection('users').doc(userPhone).set({
           name: userName,
           phone: userPhone,
-          avatar: userAvatarUrl,
-          joined: firebase.firestore.FieldValue.serverTimestamp()
+          bio: userBio,
+          avatar: userAvatarUrl
         });
       }
 
-      document.getElementById('profile-screen').classList.add('hidden');
-      document.getElementById('chat-screen').classList.remove('hidden');
+      document.getElementById('settings-name').innerText = userName;
+      document.getElementById('settings-phone').innerText = userPhone;
+      document.getElementById('settings-bio').innerText = `"${userBio}"`;
+      document.getElementById('settings-avatar').src = userAvatarUrl;
+      document.getElementById('status-user-avatar').src = userAvatarUrl;
 
+      document.getElementById('profile-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+
+      loadContactsList();
       if (db) listenToMessages();
     }
 
-    // Add Emoji
-    function addEmoji(emoji) {
-      const input = document.getElementById('message-input');
-      input.value += emoji;
-      input.dispatchEvent(new Event('input'));
+    // Tab Switcher
+    function switchTab(tab) {
+      ['updates', 'chats', 'contacts', 'settings'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        document.getElementById(`nav-${t}`).classList.remove('text-[#00a884]');
+      });
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      document.getElementById(`nav-${tab}`).classList.add('text-[#00a884]');
     }
 
-    // Contact Checking & Inviting
+    // Contact Lookup
     function openContactSearch() { document.getElementById('contact-modal').classList.remove('hidden'); }
-    function closeContactSearch() { 
-      document.getElementById('contact-modal').classList.add('hidden');
-      document.getElementById('contact-result').classList.add('hidden');
-    }
+    function closeContactSearch() { document.getElementById('contact-modal').classList.add('hidden'); }
 
     function checkContact() {
       const phone = document.getElementById('search-phone').value.trim();
@@ -295,26 +345,67 @@
           if (doc.exists) {
             const data = doc.data();
             res.className = "mb-4 text-xs font-semibold text-[#00a884]";
-            res.innerHTML = `✅ ${data.name} is on SCOTAP!<br><button onclick="startChatWith('${data.phone}', '${data.name}')" class="mt-2 text-xs bg-[#00a884] text-[#111b21] px-3 py-1 rounded-lg">Chat Now</button>`;
+            res.innerHTML = `✅ ${data.name} is on SCOTAP!<br><button onclick="startChatWith('${data.phone}', '${data.name}', '${data.avatar}', '${data.bio}')" class="mt-2 text-xs bg-[#00a884] text-[#111b21] px-4 py-1.5 font-bold rounded-lg">Message ${data.name}</button>`;
           } else {
             res.className = "mb-4 text-xs font-semibold text-yellow-400";
-            res.innerHTML = `⚠️ This contact isn't on SCOTAP yet.<br><a href="https://api.whatsapp.com/send?text=Join%20me%20on%20SCOTAP!%20${encodeURIComponent(window.location.href)}" target="_blank" class="mt-2 inline-block text-xs bg-yellow-500 text-[#111b21] px-3 py-1 rounded-lg">Send Invite</a>`;
+            res.innerHTML = `⚠️ Contact isn't on SCOTAP yet.<br><a href="https://api.whatsapp.com/send?text=Join%20me%20on%20SCOTAP!%20${encodeURIComponent(window.location.href)}" target="_blank" class="mt-2 inline-block text-xs bg-yellow-500 text-[#111b21] px-4 py-1.5 font-bold rounded-lg">Send Invite</a>`;
           }
         });
       } else {
         res.classList.remove('hidden');
         res.className = "mb-4 text-xs font-semibold text-[#00a884]";
-        res.innerHTML = `✅ Demo Contact is on SCOTAP!`;
+        res.innerHTML = `✅ Demo Contact is on SCOTAP!<br><button onclick="startChatWith('+234900000000', 'Demo User', 'https://via.placeholder.com/150', 'Demo Bio')" class="mt-2 text-xs bg-[#00a884] text-[#111b21] px-4 py-1.5 font-bold rounded-lg">Message Demo User</button>`;
       }
     }
 
-    function startChatWith(phone, name) {
-      activePeerPhone = phone;
+    function startChatWith(phone, name, avatar, bio) {
+      activeChatUser = { phone, name, avatar, bio };
       document.getElementById('active-chat-name').innerText = name;
+      document.getElementById('active-chat-avatar').src = avatar || "https://via.placeholder.com/150";
       closeContactSearch();
+      switchTab('chats');
     }
 
-    // Send Text Message
+    function openActiveUserProfile() {
+      if (!activeChatUser) return;
+      document.getElementById('pv-name').innerText = activeChatUser.name;
+      document.getElementById('pv-phone').innerText = activeChatUser.phone;
+      document.getElementById('pv-bio').innerText = activeChatUser.bio || "Hey there! I am using SCOTAP.";
+      document.getElementById('pv-avatar').src = activeChatUser.avatar || "https://via.placeholder.com/150";
+      document.getElementById('profile-view-modal').classList.remove('hidden');
+    }
+
+    function closeProfileView() { document.getElementById('profile-view-modal').classList.add('hidden'); }
+
+    // Load Contacts List
+    function loadContactsList() {
+      const container = document.getElementById('contacts-list');
+      if (db) {
+        db.collection('users').get().then(snapshot => {
+          container.innerHTML = '';
+          snapshot.forEach(doc => {
+            const u = doc.data();
+            if (u.phone !== userPhone) {
+              const div = document.createElement('div');
+              div.className = "flex items-center justify-between bg-[#202c33] p-3 rounded-2xl";
+              div.innerHTML = `
+                <div class="flex items-center gap-3">
+                  <img src="${u.avatar}" class="w-10 h-10 rounded-full object-cover">
+                  <div>
+                    <p class="font-bold text-sm">${u.name}</p>
+                    <p class="text-xs text-[#8696a0]">${u.phone}</p>
+                  </div>
+                </div>
+                <button onclick="startChatWith('${u.phone}', '${u.name}', '${u.avatar}', '${u.bio}')" class="bg-[#00a884] text-[#111b21] text-xs font-bold px-3 py-1.5 rounded-lg">Chat</button>
+              `;
+              container.appendChild(div);
+            }
+          });
+        });
+      }
+    }
+
+    // Send Messages
     function sendTextMessage() {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
@@ -328,18 +419,14 @@
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      if (db) {
-        db.collection('messages').add(msgData);
-      } else {
-        renderLocalMessage(text, 'text', true);
-      }
+      if (db) db.collection('messages').add(msgData);
+      else renderLocalMessage(text, 'text', true);
 
       input.value = '';
       document.getElementById('send-btn').classList.add('hidden');
       document.getElementById('mic-btn').classList.remove('hidden');
     }
 
-    // Send Image
     function sendImage(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -370,7 +457,6 @@
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           mediaRecorder = new MediaRecorder(stream);
           audioChunks = [];
-          
           mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
           mediaRecorder.onstop = async () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -386,17 +472,13 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
               });
             } else {
-              const audioUrl = URL.createObjectURL(audioBlob);
-              renderLocalMessage(audioUrl, 'audio', true);
+              renderLocalMessage(URL.createObjectURL(audioBlob), 'audio', true);
             }
           };
-
           mediaRecorder.start();
           isRecording = true;
           micIcon.className = "fa-solid fa-square text-red-500 animate-pulse";
-        } catch (err) {
-          alert('Microphone permission required for voice notes.');
-        }
+        } catch (err) { alert('Microphone access required.'); }
       } else {
         mediaRecorder.stop();
         isRecording = false;
@@ -404,7 +486,6 @@
       }
     }
 
-    // Render Chat Bubbles
     function renderLocalMessage(content, type, isMe) {
       const chatBox = document.getElementById('chat-box');
       const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -422,23 +503,26 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Listen to Firebase Messages Live
     function listenToMessages() {
       db.collection('messages').orderBy('timestamp', 'asc').onSnapshot(snapshot => {
         const chatBox = document.getElementById('chat-box');
         chatBox.innerHTML = '';
         snapshot.forEach(doc => {
           const data = doc.data();
-          const isMe = data.phone === userPhone;
-          renderLocalMessage(data.content, data.type, isMe);
+          renderLocalMessage(data.content, data.type, data.phone === userPhone);
         });
       });
     }
 
-    // Toggle Header Menu
+    function addEmoji(emoji) {
+      const input = document.getElementById('message-input');
+      input.value += emoji;
+      input.dispatchEvent(new Event('input'));
+    }
+
     function toggleMenu() { document.getElementById('options-menu').classList.toggle('hidden'); }
     function blockActiveUser() { alert('User blocked.'); toggleMenu(); }
-    function reportActiveUser() { alert('User reported to SCOTAP admins.'); toggleMenu(); }
+    function reportActiveUser() { alert('User reported.'); toggleMenu(); }
   </script>
 </body>
 </html>
