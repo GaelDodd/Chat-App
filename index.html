@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WhatsApp Web</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-[#e5ddd5] font-sans h-screen flex flex-col">
@@ -24,25 +22,16 @@
     </div>
     <div class="flex gap-4 text-lg">
       <i class="fa-solid fa-camera cursor-pointer"></i>
-      <i class="fa-solid fa-[#ffffff] fa-ellipsis-vertical cursor-pointer"></i>
+      <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
     </div>
   </header>
 
   <!-- CHAT MESSAGES AREA -->
   <main id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-    
-    <!-- Incoming Message -->
-    <div class="self-start max-w-[80%] bg-white rounded-lg p-2.5 shadow text-sm text-gray-800 relative">
-      <p>Welcome to your WhatsApp clone web app!</p>
+    <div class="self-start max-w-[80%] bg-white rounded-lg p-2.5 shadow text-sm text-gray-800">
+      <p>Welcome to your WhatsApp clone! Type a message below and hit send. 🚀</p>
       <span class="text-[10px] text-gray-400 block text-right mt-1">12:00 PM</span>
     </div>
-
-    <!-- Outgoing Message -->
-    <div class="self-end max-w-[80%] bg-[#dcf8c6] rounded-lg p-2.5 shadow text-sm text-gray-800 relative">
-      <p>Awesome! Building this directly on my iPhone! 🚀</p>
-      <span class="text-[10px] text-gray-500 block text-right mt-1">12:01 PM <i class="fa-solid fa-check-double text-blue-500"></i></span>
-    </div>
-
   </main>
 
   <!-- INPUT FOOTER -->
@@ -62,9 +51,39 @@
     />
 
     <button id="send-btn" class="bg-[#075e54] text-white w-10 h-10 rounded-full flex items-center justify-center text-sm shadow">
-      <i class="fa-solid fa-microphone"></i>
+      <i class="fa-solid fa-paper-plane"></i>
     </button>
   </footer>
+
+  <!-- JAVASCRIPT FOR CHAT FUNCTIONALITY -->
+  <script>
+    const sendBtn = document.getElementById('send-btn');
+    const messageInput = document.getElementById('message-input');
+    const chatBox = document.getElementById('chat-box');
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'self-end max-w-[80%] bg-[#dcf8c6] rounded-lg p-2.5 shadow text-sm text-gray-800 relative';
+      msgDiv.innerHTML = `
+        <p>${text}</p>
+        <span class="text-[10px] text-gray-500 block text-right mt-1">${time} <i class="fa-solid fa-check-double text-blue-500"></i></span>
+      `;
+
+      chatBox.appendChild(msgDiv);
+      messageInput.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
 
 </body>
 </html>
