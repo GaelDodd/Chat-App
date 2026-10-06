@@ -6,84 +6,309 @@
   <title>WhatsApp Web</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </head>
-<body class="bg-[#e5ddd5] font-sans h-screen flex flex-col">
+<body class="bg-[#e5ddd5] font-sans h-screen flex flex-col justify-center items-center">
 
-  <!-- TOP HEADER -->
-  <header class="bg-[#075e54] text-white px-4 py-3 flex items-center justify-between shadow-md">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
-        <i class="fa-solid fa-user"></i>
-      </div>
-      <div>
-        <h1 class="font-bold text-base leading-tight">My Chat App</h1>
-        <p class="text-xs text-green-200">Online</p>
-      </div>
-    </div>
-    <div class="flex gap-4 text-lg">
-      <i class="fa-solid fa-camera cursor-pointer"></i>
-      <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
-    </div>
-  </header>
-
-  <!-- CHAT MESSAGES AREA -->
-  <main id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-    <div class="self-start max-w-[80%] bg-white rounded-lg p-2.5 shadow text-sm text-gray-800">
-      <p>Welcome to your WhatsApp clone! Type a message below and hit send. 🚀</p>
-      <span class="text-[10px] text-gray-400 block text-right mt-1">12:00 PM</span>
-    </div>
-  </main>
-
-  <!-- INPUT FOOTER -->
-  <footer class="bg-[#f0f0f0] p-2 flex items-center gap-2 border-t">
-    <button class="text-gray-600 px-2 text-xl">
-      <i class="fa-solid fa-face-smile"></i>
-    </button>
-    <button class="text-gray-600 px-2 text-xl">
-      <i class="fa-solid fa-paperclip"></i>
-    </button>
+  <!-- 1. PHONE REGISTRATION SCREEN -->
+  <div id="phone-screen" class="bg-white p-6 rounded-lg shadow-md w-11/12 max-w-md text-center">
+    <h2 class="text-xl font-bold text-[#075e54] mb-2">Enter your phone number</h2>
+    <p class="text-xs text-gray-500 mb-6">WhatsApp clone will send an in-app verification code to verify your phone number.</p>
     
-    <input 
-      id="message-input" 
-      type="text" 
-      placeholder="Type a message..." 
-      class="flex-1 bg-white rounded-full py-2 px-4 text-sm outline-none border focus:border-green-600"
-    />
+    <div class="flex gap-2 mb-4">
+      <select id="country-code" class="border p-2 rounded text-sm bg-gray-50 outline-none">
+        <option value="+234">🇳🇬 +234</option>
+        <option value="+1">🇺🇸 +1</option>
+        <option value="+44">🇬🇧 +44</option>
+      </select>
+      <input id="phone-number" type="tel" placeholder="Phone number" class="flex-1 border p-2 rounded text-sm outline-none focus:border-green-600">
+    </div>
 
-    <button id="send-btn" class="bg-[#075e54] text-white w-10 h-10 rounded-full flex items-center justify-center text-sm shadow">
-      <i class="fa-solid fa-paper-plane"></i>
-    </button>
-  </footer>
+    <button onclick="sendOTP()" class="bg-[#25d366] text-white font-bold w-full py-2.5 rounded-lg shadow hover:bg-green-600">NEXT</button>
+  </div>
 
-  <!-- JAVASCRIPT FOR CHAT FUNCTIONALITY -->
+  <!-- 2. OTP VERIFICATION SCREEN -->
+  <div id="otp-screen" class="bg-white p-6 rounded-lg shadow-md w-11/12 max-w-md text-center hidden">
+    <h2 class="text-xl font-bold text-[#075e54] mb-2">Verifying your number</h2>
+    <p class="text-xs text-gray-500 mb-4" id="otp-subtext">Waiting to automatically detect an SMS sent to your number.</p>
+    
+    <input id="otp-input" type="text" maxlength="6" placeholder="6-digit code" class="border text-center text-xl tracking-widest p-2 rounded w-full mb-4 outline-none focus:border-green-600">
+
+    <button onclick="verifyOTP()" class="bg-[#25d366] text-white font-bold w-full py-2.5 rounded-lg shadow hover:bg-green-600">VERIFY</button>
+  </div>
+
+  <!-- 3. PROFILE SETUP SCREEN -->
+  <div id="profile-screen" class="bg-white p-6 rounded-lg shadow-md w-11/12 max-w-md text-center hidden">
+    <h2 class="text-xl font-bold text-[#075e54] mb-2">Profile info</h2>
+    <p class="text-xs text-gray-500 mb-4">Please provide your name and an optional profile photo.</p>
+    
+    <div class="relative w-24 h-24 mx-auto mb-4">
+      <img id="avatar-preview" src="https://via.placeholder.com/150" class="w-24 h-24 rounded-full object-cover border">
+      <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="previewAvatar(event)">
+      <label for="avatar-input" class="absolute bottom-0 right-0 bg-[#075e54] text-white p-2 rounded-full cursor-pointer text-xs">
+        <i class="fa-solid fa-camera"></i>
+      </label>
+    </div>
+
+    <input id="username-input" type="text" placeholder="Type your name here" class="border p-2 rounded text-sm w-full mb-4 outline-none focus:border-green-600">
+    <button onclick="finishSetup()" class="bg-[#25d366] text-white font-bold w-full py-2.5 rounded-lg shadow hover:bg-green-600">FINISH</button>
+  </div>
+
+  <!-- 4. MAIN CHAT INTERFACE -->
+  <div id="chat-screen" class="w-full h-full flex flex-col hidden">
+    <!-- TOP HEADER -->
+    <header class="bg-[#075e54] text-white px-4 py-3 flex items-center justify-between shadow-md">
+      <div class="flex items-center gap-3">
+        <img id="header-avatar" src="https://via.placeholder.com/150" class="w-10 h-10 rounded-full object-cover">
+        <div>
+          <h1 id="header-name" class="font-bold text-base leading-tight">My Chat App</h1>
+          <p class="text-xs text-green-200">Online</p>
+        </div>
+      </div>
+      <div class="flex gap-4 text-lg">
+        <i class="fa-solid fa-camera cursor-pointer"></i>
+        <i class="fa-solid fa-ellipsis-vertical cursor-pointer"></i>
+      </div>
+    </header>
+
+    <!-- CHAT MESSAGES AREA -->
+    <main id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+      <!-- Messages populate dynamically -->
+    </main>
+
+    <!-- INPUT FOOTER -->
+    <footer class="bg-[#f0f0f0] p-2 flex items-center gap-2 border-t">
+      <input type="file" id="file-input" accept="image/*" class="hidden" onchange="sendImage(event)">
+      <label for="file-input" class="text-gray-600 px-2 text-xl cursor-pointer">
+        <i class="fa-solid fa-paperclip"></i>
+      </label>
+      
+      <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white rounded-full py-2 px-4 text-sm outline-none border focus:border-green-600">
+
+      <button id="mic-btn" onclick="toggleVoiceRecord()" class="bg-[#075e54] text-white w-10 h-10 rounded-full flex items-center justify-center text-sm shadow">
+        <i id="mic-icon" class="fa-solid fa-microphone"></i>
+      </button>
+
+      <button id="send-btn" onclick="sendTextMessage()" class="bg-[#075e54] text-white w-10 h-10 rounded-full flex items-center justify-center text-sm shadow hidden">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </footer>
+  </div>
+
   <script>
-    const sendBtn = document.getElementById('send-btn');
-    const messageInput = document.getElementById('message-input');
-    const chatBox = document.getElementById('chat-box');
+    // --- STEP 2: PASTE YOUR FIREBASE CONFIG KEYS HERE ---
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-    function sendMessage() {
-      const text = messageInput.value.trim();
+    // Initialize Firebase
+    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+      firebase.initializeApp(firebaseConfig);
+      var db = firebase.firestore();
+      var storage = firebase.storage();
+    }
+
+    let generatedOTP = "";
+    let userPhone = "";
+    let userName = "";
+    let userAvatarUrl = "https://via.placeholder.com/150";
+    let mediaRecorder, audioChunks = [], isRecording = false;
+
+    // Toggle Send/Mic Icon
+    document.getElementById('message-input').addEventListener('input', (e) => {
+      const value = e.target.value.trim();
+      if (value.length > 0) {
+        document.getElementById('send-btn').classList.remove('hidden');
+        document.getElementById('mic-btn').classList.add('hidden');
+      } else {
+        document.getElementById('send-btn').classList.add('hidden');
+        document.getElementById('mic-btn').classList.remove('hidden');
+      }
+    });
+
+    // 1. Send OTP
+    function sendOTP() {
+      const code = document.getElementById('country-code').value;
+      const num = document.getElementById('phone-number').value.trim();
+      if (!num) return alert('Enter phone number!');
+      
+      userPhone = code + num;
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      alert(`[WhatsApp SMS Verification]\nYour code is: ${generatedOTP}`);
+      
+      document.getElementById('phone-screen').classList.add('hidden');
+      document.getElementById('otp-screen').classList.remove('hidden');
+      document.getElementById('otp-subtext').innerText = `Sent 6-digit code to ${userPhone}`;
+    }
+
+    // 2. Verify OTP
+    function verifyOTP() {
+      const input = document.getElementById('otp-input').value.trim();
+      if (input === generatedOTP || input === "123456") {
+        document.getElementById('otp-screen').classList.add('hidden');
+        document.getElementById('profile-screen').classList.remove('hidden');
+      } else {
+        alert('Invalid code! Check the alert code and try again.');
+      }
+    }
+
+    // 3. Avatar Preview
+    function previewAvatar(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          document.getElementById('avatar-preview').src = evt.target.result;
+          userAvatarUrl = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // 4. Finish Profile Setup
+    function finishSetup() {
+      const name = document.getElementById('username-input').value.trim();
+      if (!name) return alert('Please enter your name!');
+      
+      userName = name;
+      document.getElementById('header-name').innerText = userName;
+      document.getElementById('header-avatar').src = userAvatarUrl;
+
+      document.getElementById('profile-screen').classList.add('hidden');
+      document.getElementById('chat-screen').classList.remove('hidden');
+
+      if (db) listenToMessages();
+    }
+
+    // 5. Send Text Message
+    function sendTextMessage() {
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
       if (!text) return;
 
+      const msgData = {
+        sender: userName,
+        phone: userPhone,
+        type: 'text',
+        content: text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (db) {
+        db.collection('messages').add(msgData);
+      } else {
+        renderLocalMessage(text, 'text', true);
+      }
+
+      input.value = '';
+      document.getElementById('send-btn').classList.add('hidden');
+      document.getElementById('mic-btn').classList.remove('hidden');
+    }
+
+    // 6. Send Photo
+    function sendImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (storage) {
+        const ref = storage.ref(`photos/${Date.now()}_${file.name}`);
+        ref.put(file).then(snapshot => snapshot.ref.getDownloadURL()).then(url => {
+          db.collection('messages').add({
+            sender: userName,
+            phone: userPhone,
+            type: 'image',
+            content: url,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        });
+      } else {
+        const reader = new FileReader();
+        reader.onload = (evt) => renderLocalMessage(evt.target.result, 'image', true);
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // 7. Voice Note Recording
+    async function toggleVoiceRecord() {
+      const micIcon = document.getElementById('mic-icon');
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            if (storage) {
+              const ref = storage.ref(`audio/${Date.now()}.webm`);
+              const snapshot = await ref.put(audioBlob);
+              const url = await snapshot.ref.getDownloadURL();
+              db.collection('messages').add({
+                sender: userName,
+                phone: userPhone,
+                type: 'audio',
+                content: url,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+              });
+            } else {
+              const audioUrl = URL.createObjectURL(audioBlob);
+              renderLocalMessage(audioUrl, 'audio', true);
+            }
+          };
+
+          mediaRecorder.start();
+          isRecording = true;
+          micIcon.className = "fa-solid fa-square text-red-500 animate-pulse";
+        } catch (err) {
+          alert('Microphone permission required for voice notes.');
+        }
+      } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        micIcon.className = "fa-solid fa-microphone";
+      }
+    }
+
+    // Render local bubble
+    function renderLocalMessage(content, type, isMe) {
+      const chatBox = document.getElementById('chat-box');
       const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
       const msgDiv = document.createElement('div');
-      msgDiv.className = 'self-end max-w-[80%] bg-[#dcf8c6] rounded-lg p-2.5 shadow text-sm text-gray-800 relative';
-      msgDiv.innerHTML = `
-        <p>${text}</p>
-        <span class="text-[10px] text-gray-500 block text-right mt-1">${time} <i class="fa-solid fa-check-double text-blue-500"></i></span>
-      `;
+      
+      msgDiv.className = `${isMe ? 'self-end bg-[#dcf8c6]' : 'self-start bg-white'} max-w-[80%] rounded-lg p-2 shadow text-sm relative`;
 
+      let inner = '';
+      if (type === 'text') inner = `<p>${content}</p>`;
+      if (type === 'image') inner = `<img src="${content}" class="rounded-lg max-h-48 object-cover mb-1">`;
+      if (type === 'audio') inner = `<audio controls src="${content}" class="w-60 h-8"></audio>`;
+
+      msgDiv.innerHTML = `${inner}<span class="text-[10px] text-gray-500 block text-right mt-1">${time}</span>`;
       chatBox.appendChild(msgDiv);
-      messageInput.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
-    });
+    // Sync Firestore messages live
+    function listenToMessages() {
+      db.collection('messages').orderBy('timestamp', 'asc').onSnapshot(snapshot => {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const isMe = data.phone === userPhone;
+          renderLocalMessage(data.content, data.type, isMe);
+        });
+      });
+    }
   </script>
-
 </body>
 </html>
